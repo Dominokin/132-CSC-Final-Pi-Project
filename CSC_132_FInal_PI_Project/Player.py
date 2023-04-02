@@ -1,5 +1,5 @@
 class Player:
-    def __init__(self, max_health = 30, current_health = 30, damage, level):
+    def __init__(self, max_health = 30, current_health = 30, damage = 10, level = 1):
         self.max_health = max_health
         self.current_health = current_health
         self.damage = damage
