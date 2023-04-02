@@ -53,6 +53,16 @@ class Player:
         if(potions > 0):
             self.current_health += 20
         else:
-            print("You have no more health potions")
+            return "You have no more health potions"
+
+    def attack(self):
+        attack_damage = randint(1, self.damage)
+        #takes away health, with the amount of health taken away by the
+        #attack damage integer
+        pass
+
+    def flee(self):
+        #resets the encounter, with a new enemy, keeping same health and items, coins
+        pass
 
         
