@@ -3,21 +3,19 @@ import pygame
 from time import *
 from Player import *
 from Enemy import *
-from Sprite import *
+#from Sprite import *
 
 ##################  GAME CLASS SETUP  ##################
-class Game(Player, Sprite):
-    def __init__(self, enc_num):
-        super().__init__()
-        self.enc_num = enc_num
+class Game(Player, Enemy):
+    def __init__(self):
+        Player.__init__()
+        Enemy.__init__()
 
-    @property
-    def enc_num(self):
-        return self._enc_num
+    def draw_player(Player):
+        screen.blit(Player.image, Player.rect)
 
-    @enc_num.setter
-    def enc_num(self, value):
-        self._enc_num = value
+    def draw_enemy(Enemy):
+        screen.blit(Enemy.image, Enemy.rect)
 
     #scale enemy health and damage. Can be adjusted later
     def scale(self):
@@ -28,7 +26,7 @@ class Game(Player, Sprite):
     #mini boss encounter after 4 to 6 rounds
     def mini_boss_enc(self):
         if self.enc_num == 4 and self.enc_num < 6:
-            choose = randint(0,100)
+            choose = randint(0,101)
             if choose > 50:
                 #start mini boss encounter
                 pass
@@ -49,17 +47,43 @@ fps = 30
 #set the area for the bottom pannel to display character's stuff
 bottom_pannel = 150
 #define screen dimentions
-screen_width = 1000
-screen_height = 600 + bottom_pannel
-
+screen_width = 785
+screen_height = 442 + bottom_pannel
 
 #set up the display
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Pi game")
 
-##load images and use functions for drawing them onto the screen
-##### THIS WILL BE SET LATER ##########
+#load images and use functions for drawing them onto the screen
+background_img = pygame.image.load('Background\dungeon-bg.jpeg').convert_alpha()
+def draw_bg():
+    screen.blit(background_img, (0,0))
 
+#instantiate 
+p = Player(200, 250, 30, 30, 10, 1)
+
+#make enemy types
+bat = Enemy(500, 250, "Bat", 10, 10)
+witch = Enemy(500, 250, "Witch", 30, 20)
+wolf = Enemy(500, 250, "Wolf", 20, 15)
+
+#put the enemies in lists to easily randomize which one to use
+enemy_list = []
+enemy_list.append(bat)
+enemy_list.append(witch)
+enemy_list.append(wolf)
+
+#start the encounter
+enc_num = 1
+
+#displayed number of encounters
+#reset after every mini boss round
+enc_count = 1
+
+#replace the numbers with the gpio inputs
+p.attack = 1
+p.heal = 2
+p.flee = 3
 
 ######################## THIS IS THE MAIN GAME LOOP #######################
 running = True
@@ -73,8 +97,22 @@ while(running):
     clock.tick(fps)
 
     #draw the background
-    #TBD
+    draw_bg()
+
+    #draw the player
+    Game.draw_player(p)
+
+    #spawn random enemy type
+    choose_enemy = randint(0, 2)
+    Game.draw_enemy(enemy_list[choose_enemy])
     
-    #start the game
+    #let player go first
+    #if the player attacks, use the player.attack method in the Player class
+    #if the players heals, use the player.heal method in the Player class
+    #if the player flees, pass all of this and restart the encounter
+    #check to see if the enemy has felled. If not, then it is the enemy's turn
+    #if player doesn't flee, use the enemy attack method in the enemy class
+    #check player health and if you die, play death animation
+    #if the player is still alive, reset the gameplay loop
     pygame.display.update()
 pygame.quit()
