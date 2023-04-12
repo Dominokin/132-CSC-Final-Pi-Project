@@ -114,5 +114,13 @@ while(running):
     #if player doesn't flee, use the enemy attack method in the enemy class
     #check player health and if you die, play death animation
     #if the player is still alive, reset the gameplay loop
+    
+    #process(button):
+        #if button == attack
+            #player.attack()
+        #if button == heal
+            #player.heal()
+        #if button == flee
+            #player.flee()
     pygame.display.update()
 pygame.quit()
