@@ -116,11 +116,19 @@ while(running):
     #if the player is still alive, reset the gameplay loop
     
     #process(button):
-        #if button == attack
+        #if player.health == 0:
+            ##Implement death function for player
+            #player.die
+        #if enemy.health == 0:
+            ##Implement death function for enemy
+            #enemy.die
+        #if button == p.attack
             #player.attack()
-        #if button == heal
+            #enemy.attack()
+        #if button == p.heal
             #player.heal()
-        #if button == flee
+            #enemy.attack()
+        #if button == p.flee
             #player.flee()
     pygame.display.update()
 pygame.quit()
