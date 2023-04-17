@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 
 class Enemy:
     def __init__(self, x, y, name, health, damage):

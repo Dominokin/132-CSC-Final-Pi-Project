@@ -18,18 +18,6 @@ class SpriteSheet():
         self.attack = attack
         self.death= death
 
-    @property
-    def idle(self):
-        return self._idle
-
-    @property
-    def attack(self):
-        return self._attack
-
-    @property
-    def death(self):
-        return self._death
-
     #method for displaying the image on the screen
     #get_img has 5 arguments: the frame, IE. the starting position of the sprite sheet
     #Width and height of the sprite sheet, which in this case, is 64 x 64
@@ -51,21 +39,6 @@ class SpriteSheet():
         image.set_colorkey(color)
         return image
 
-##class Bat(SpriteSheet):
-##    def __init__(self, idle, attack, death):
-##        super().__init__()
-##        self.idle = 'AllCharacters/Bat/BatFlight_strip.png'
-##        self.attack = 'AllCharacters/Bat/BatAttack_strip.png'
-##        self.death  = 'AllCharacters/Bat/BatDeath_strip.png'
-##
-##    def get_img(self, frame, width, height, scale, color):
-##        super().get_img(self, frame, width, height, scale, color)
-##
-##class Wolf(SpriteSheet):
-##    def __init__(self, idle = 'AllCharacters/Wolf/WolfIdle_strip.png',
-##                 attack = 'AllCharacters/Wolf/WolfAttack_strip.png',
-##                 death = 'AllCharacters/Wolf/WolfDeath_strip.png'):
-##        super().__init__()
     
 #set the background color    
 bg = (50, 50, 50)
@@ -79,16 +52,16 @@ pygame.display.set_caption('Spritesheets')
 
 #Load in the sprite sheet
 #Individual sprite images are 64 x 64 (IN THE CASE OF THE, MAKE SURE YOU CHECK)
-sprite_sheet = Bat.attack
+sprite_sheet = pygame.image.load('AllCharacters/Bat/BatAttack_strip.png').convert_alpha()
 
 #Create animation list, with the amount of frames per specific animation
 animation_list = []
-animation_steps = {Bat: {'AllCharacters/Bat/BatAttack_strip.png': 10, }
+animation_steps = 8
 last_update = pygame.time.get_ticks()
 animation_cooldown = 75
 frame = 0
-for x in range(animation_steps[Bat.attack]):
-    animation_list.append((Bat.get_img(x, 64, 64, 2, BG_REMOVE)))
+for x in range(animation_steps):
+    animation_list.append((SpriteSheet.get_img(sprite_sheet, x, 64, 64, 2, BG_REMOVE)))
 
 #make a while loop to keep the game running
 run = True
