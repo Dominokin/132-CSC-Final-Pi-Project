@@ -9,10 +9,16 @@ class Enemy:
         self.health = health
         self.damage = damage
         self.alive = True
-        img = pygame.image.load(f'AllCharacters/{self.name}/{self.name}Idle_strip.png')
-        self.image = pygame.transform.scale(img, (img.get_width() * 2, img.get_height() * 2))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x, self.y)
+        self.animation_list = []
+        self.frame = 0
+        self.action = 0 #0:Idle, 1:Attack, 2:Death
+        self.update_time = pygame.time.get_ticks()
+        #load sprite sheets
+        self.animation_list.append(f'AllCharacters/{self.name}/{self.name}Idle_strip.png')
+        self.animation_list.append(f'AllCharacters/{self.name}/{self.name}Attack_strip.png')
+        self.animation_list.append(f'AllCharacters/{self.name}/{self.name}Death_strip.png')
+        self.image = pygame.image.load(self.animation_list[self.action])
+        self.rect = self.image.get_rect(center = (self.x, self.y))
 
     def draw(self):
         screen.blit(self.image, self.rect)

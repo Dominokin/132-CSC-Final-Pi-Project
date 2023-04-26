@@ -1,7 +1,3 @@
-##class Sprite:
-##    def __init__(self, ):
-##        pass
-
 #importing pygame
 import pygame
 #initialize pygame
@@ -26,7 +22,7 @@ class SpriteSheet():
     #and the color, which removes the background color from the sprite sheet
     #This will be set to (113, 102, 79, 225), which is Red, green, blue, and transparency
     #respectivly
-    def get_img(self, frame, width, height, scale, color):
+    def get_img(sheet, frame, width, height, scale, color):
         image = pygame.Surface((width, height)).convert_alpha()
         #This part of the method will take the following arguments, respectivly:
         #the sprite sheet instantiated by the SpriteSheet class
@@ -34,7 +30,7 @@ class SpriteSheet():
         #frame * width and 0 is what frame will be rendered from the sprite sheet
         #width and height is how much of the frame will be shown...
         #In this case, we want all of the image to show
-        image.blit(self.sheet, (0, 0), ((frame * width), 0, width, height))
+        image.blit(sheet, (0, 0), ((frame * width), 0, width, height))
         image = pygame.transform.scale(image, (width * scale, height * scale))
         image.set_colorkey(color)
         return image
@@ -44,7 +40,6 @@ class SpriteSheet():
 bg = (50, 50, 50)
 #BAckground removal color
 BG_REMOVE = (113, 102, 79, 255)
-
 
 #set up the screen to display the image
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -81,7 +76,7 @@ while run:
         #update the frame and reset the recent update to the last tick
         frame += 1
         last_update = current_time
-        if frame >= animation_steps[Bat.attack]:
+        if frame >= animation_steps:
             frame = 0
         
     #show the animation on the screen
