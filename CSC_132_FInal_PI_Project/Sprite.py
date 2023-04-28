@@ -80,7 +80,7 @@ while run:
             frame = 0
         
     #show the animation on the screen
-    screen.blit(animation_list[frame], (0,0))
+    screen.blit(animation_list[frame], (130,200))
 
     #update to show the image on screen
     pygame.display.update()
