@@ -19,7 +19,7 @@ class Game:
         self.update_time = pygame.time.get_ticks()
         self.animation_cooldown = 100
         #Background removal color
-        BG_REMOVE = (113, 102, 79, 255)
+        BG_REMOVE = (113, 102, 79)
         self.animation_steps = {"KnightIdle": 15, "KnightAttack": 21, "KnightDeath": 15, "BatIdle": 8,\
                     "BatAttack": 10, "BatDeath": 10, "WitchIdle": 7, "WitchAttack": 18, \
                     "WitchDeath": 12, "WolfIdle": 12, "WolfAttack": 16, "WolfDeath": 18}
@@ -81,7 +81,7 @@ class Game:
     def y(self):
         return self._y
 
-    @x.setter
+    @y.setter
     def y(self, value):
         self._y = value
 
@@ -271,7 +271,6 @@ while(running):
     p.draw()
     newEnemy.update()
     newEnemy.draw()
-    
 
     #let player go first
 ##    if p.current_health > 0:
