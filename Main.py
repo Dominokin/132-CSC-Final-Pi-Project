@@ -320,7 +320,12 @@ def draw_bg():
 #    for i in range(p.potions):
 #        screen.blit(potion_img, (spacing, screen_height - bottom_pannel + 85))
 #        spacing += 25
-
+#   
+#    # Draw the enemy's health bar
+#    enemy_hp_ratio = newEnemy.current_health/newEnemy.max_health
+#    draw_text(f"HP: {newEnemy.current_health}/{newEnemy.max_health}", font, white, screen_width/2+10, screen_height - bottom_pannel + 10)
+#    pygame.draw.rect(screen, red, (screen_width/2+10, screen_height - bottom_pannel + 35, 150, 20))
+#    pygame.draw.rect(screen, green, (screen_width/2+10, screen_height - bottom_pannel + 35, 150*enemy_hp_ratio, 20))
 
 
 #instantiate the player
