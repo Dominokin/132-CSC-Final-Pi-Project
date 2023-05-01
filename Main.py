@@ -3,6 +3,7 @@ import math
 from random import randint
 import pygame
 from time import *
+from pygame.locals import MOUSEBUTTONDOWN
 
 ##################  GAME CLASS SETUP  ##################
 class Game:
@@ -119,13 +120,10 @@ class Game:
 
     @current_health.setter
     def current_health(self, newHealth):
-        if(newHealth >= 30):
-            self._current_health = 30
-        elif(newHealth <= 0):
+        if(newHealth <= 0):
             self._current_health = 0
-            #maybe have a screen pop up saying YOU DIED or something like that
         else:
-            self._current_health = math.ceil(newHealth)
+            self._current_health = round(newHealth)
 
     @property
     def damage(self):
@@ -192,7 +190,11 @@ class Game:
         
     def heal(self):
         if(self.potions > 0):
-            self.current_health += 20
+            temp_health = self.current_health + 20
+            if temp_health >= self.max_health:
+                self.current_health = self.max_health
+            else:
+                self.current_health += 20
         else:
             return "You have no more health potions"
 
@@ -218,9 +220,10 @@ class Game:
     #scale health and damage. Can be adjusted later
     def scale(self):
         global enc_num
-        scale_amount = enc_num * 1.5
-        self.max_health *= scale_amount
-        self.damage *= scale_amount
+        if enc_num % 3 == 0:
+            scale_amount = ((enc_num/3)*1.1)
+            self.max_health = round(scale_amount * self.max_health)
+            self.damage = round(scale_amount * self.damage)
 
     #mini boss encounter after 4 to 6 rounds
     def mini_boss_enc(self):
@@ -265,22 +268,40 @@ GPIO.setup(attack, GPIO.IN, GPIO.PUD_DOWN)
 GPIO.setup(heal, GPIO.IN, GPIO.PUD_DOWN)
 GPIO.setup(flee, GPIO.IN, GPIO.PUD_DOWN)
 
+#set the area for the bottom pannel to display character's stuff
+bottom_pannel = 150
+#define screen dimentions
+screen_width = 785
+screen_height = 442 + bottom_pannel
+
 #game variables
 current_turn = 1
 total_turns = 2
 #action cooldown for the ai enemies
 action_cooldown = 0
 action_wait_time = 90
+RED = (178, 8, 8)
+GREEN = (0, 255, 0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+#font for the endgame screen
+font = pygame.font.Font(None, 30)
+
+#set up the font for the text
+font_2 = pygame.font.SysFont("Arial", 20)
+
+#set the text for the death screen
+restart = font.render("RESTART", True, WHITE, RED)
+leave = font.render("EXIT", True, WHITE, RED)
+
+#set the rect object for the end screen text
+textRect_restart = restart.get_rect(center=(screen_width/2.3, screen_height/2))
+textRect_leave = leave.get_rect(center=(screen_width/1.7, screen_height/2))
 
 #set the frame rate for animations
 clock = pygame.time.Clock()
 fps = 30
-
-#set the area for the bottom pannel to display character's stuff
-bottom_pannel = 150
-#define screen dimentions
-screen_width = 785
-screen_height = 442 + bottom_pannel
 
 #set up the display
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -291,47 +312,32 @@ background_img = pygame.image.load('Background/dungeon-bg.jpeg').convert_alpha()
 def draw_bg():
     screen.blit(background_img, (0,0))
 
-    
-##function for displaying text
-#def draw_text(text, font, text_color, x, y):
-#    img = font.render(text, True, text_color)
-#    screen.blit(img, (x, y))
-#def draw_hud():
-#    # Set up the font for the text
-#    font = pygame.font.SysFont("Arial", 20)
-#
-#    # Some colors for display
-#    red = (255, 0, 0)
-#    green = (0, 255, 0)
-#    white = (255, 255, 255)
-#
-#    # Draw the player's health bar
-#    player_hp_ratio = p.current_health/p.max_health
-#    pygame.draw.rect(screen, black, (10, screen_height - bottom_pannel + 10, 150, 20))
-#    draw_text(f"HP: {p.current_health}/{p.max_health}", font, white, 10, screen_height - bottom_pannel + 10)
-#    pygame.draw.rect(screen, red, (10, screen_height - bottom_pannel + 35, 150, 20))
-#    pygame.draw.rect(screen, green, (10, screen_height - bottom_pannel + 35, 150*player_hp_ratio, 20))
-#    
-#    # Draw the player's XP bar
-#    pygame.draw.rect(screen, black, (10, screen_height - bottom_pannel + 60, 150, 20))
-#    draw_text(f"Level: {p.level}", font, white, 10, screen_height - bottom_pannel + 60)
-#
-#    # Draw the player's potion count
-#    potion_img = pygame.image.load("Icons\icons\\32x32\potion_01a.png").convert_alpha()
-#    spacing = 0
-#    pygame.draw.rect(screen, black, (spacing, screen_height - bottom_pannel + 85, 150, 20))
-#    for i in range(p.potions):
-#        screen.blit(potion_img, (spacing, screen_height - bottom_pannel + 85))
-#        spacing += 25
-#   
-#    # Draw the enemy's health bar
-#    enemy_hp_ratio = newEnemy.current_health/newEnemy.max_health
-#    pygame.draw.rect(screen, black, ( screen_width/2+10, screen_height - bottom_pannel + 10, 150, 20))
-#    draw_text(f"HP: {newEnemy.current_health}/{newEnemy.max_health}", font, white, screen_width/2+10, screen_height - bottom_pannel + 10)
-#    pygame.draw.rect(screen, red, (screen_width/2+10, screen_height - bottom_pannel + 35, 150, 20))
-#    pygame.draw.rect(screen, green, (screen_width/2+10, screen_height - bottom_pannel + 35, 150*enemy_hp_ratio, 20))
+def draw_hud():
+    pygame.draw.rect(screen, BLACK, (10, screen_height - bottom_pannel + 60, 150, 20))
+    #draw the player's health bar
+    player_hp_ratio = p.current_health/p.max_health
+    pygame.draw.rect(screen, BLACK, (10, screen_height - bottom_pannel + 10, 150, 20))
+    pygame.draw.rect(screen, RED, (10, screen_height - bottom_pannel + 35, 150\
+                                   , 20))
+    pygame.draw.rect(screen, GREEN, (10, screen_height - bottom_pannel + 35, \
+                                     150*player_hp_ratio, 20))
 
+    #draw the player's potion count
+    potion_img = pygame.image.load("Icons/icons/32x32/potion_01a.png").convert_alpha()
+    spacing = 0
+    pygame.draw.rect(screen, BLACK, (spacing, screen_height - bottom_pannel + 85, 150, 40))
+    for i in range(p.potions):
+        screen.blit(potion_img, (spacing, screen_height - bottom_pannel + 85))
+        spacing += 25
 
+    #draw the enemy's health bar
+    enemy_hp_ratio = newEnemy.current_health/newEnemy.max_health
+    pygame.draw.rect(screen, BLACK, (screen_width/2 + 10, screen_height - bottom_pannel + 10, 150, 20))
+    pygame.draw.rect(screen, RED, (screen_width/2 + 10, screen_height - bottom_pannel\
+                                   +35, 150, 20))
+    pygame.draw.rect(screen, GREEN, (screen_width/2 + 10, screen_height - bottom_pannel\
+                                     + 35, 150*enemy_hp_ratio, 20))
+        
 #instantiate the player
 p = Game(250, 350, "Knight", 30, 30, 10, 1, 1)
 
@@ -352,6 +358,9 @@ newEnemy = None
 #keep track of the encounter number
 enc_num = 1
 
+#set the game over variable to false
+game_over = False
+
 ######################## THIS IS THE MAIN GAME LOOP #######################
 running = True
 while(running):
@@ -360,6 +369,31 @@ while(running):
         if event.type == pygame.QUIT:
             running = False
 
+        elif event.type == MOUSEBUTTONDOWN:
+            #get mouse position
+            mpos = pygame.mouse.get_pos()
+            if pygame.mouse.get_pressed():
+                if textRect_restart.collidepoint(mpos):
+                    p.current_health = 30
+                    p.max_health = 30
+                    p.damage = 10
+                    p.level = 1
+                    p.xp = 0
+                    p.potions = 1
+                    bat.current_health = 10
+                    bat.max_health = 10
+                    bat.damage = 5
+                    witch.current_health = 20
+                    witch.max_health = 20
+                    witch.damage = 10
+                    wolf.current_health = 15
+                    wolf.max_health = 15
+                    wolf.damage = 8
+                    enc_num = 1
+                    p.idle()
+                    game_over = False
+                elif textRect_leave.collidepoint(mpos):
+                    running = False
     #set frame rate
     clock.tick(fps)
 
@@ -372,15 +406,25 @@ while(running):
         newEnemy = sprite_dict[choose_enemy]
         newEnemy.current_health = newEnemy.max_health
         newEnemy.idle()
+        print(f"Enemy Health: {newEnemy.current_health}")
+        print(f"Enemy Damage: {newEnemy.damage}")
     p.update()
     p.draw()
     newEnemy.update()
     newEnemy.draw()
-    
-    ##draw the hud
-    #draw_hud()
 
-    #let player go first
+    #draw the hud
+    draw_hud()
+    level_hud = font_2.render(f"Level: {p.level}", True, WHITE, None)
+    player_hud = font_2.render(f"HP: {p.current_health}/{p.max_health}", True, WHITE, None)
+    enemy_hud = font_2.render(f"HP: {newEnemy.current_health}/{newEnemy.max_health}", True, \
+                 WHITE, None)
+    screen.blit(player_hud, (10, screen_height - bottom_pannel + 10))
+    screen.blit(enemy_hud, (screen_width/2 + 10, screen_height - bottom_pannel \
+                            + 10))
+    screen.blit(level_hud, (10, screen_height - bottom_pannel + 60))
+
+        #let player go first
     if p.current_health > 0:
         #if it is the player's turn
         if current_turn == 1:
@@ -391,15 +435,15 @@ while(running):
                 newEnemy.current_health -= damage
                 if newEnemy.current_health <= 0:
                     newEnemy.death()
+                    enc_num += 1
                     p.xp += randint(10, 30)
                     potion_chance = randint(0, 30)
-                    if potion_chance > 13:
+                    for enemy in range(len(sprite_dict) - 1):
+                        sprite_dict[enemy].scale()
+                    if potion_chance > 20:
                         p.potions += 1
-                        print("Potion found")
                 action_cooldown = 0
                 current_turn += 1
-                print(f"HEALTH: {newEnemy.current_health}")
-                print(f"XP: {p.xp}")
             #if the players heals, use the player.heal method in the Player class
             elif GPIO.input(heal):
                 p.heal()
@@ -412,30 +456,51 @@ while(running):
                 newEnemy = None
                 action_cooldown = 0
                 current_turn += 2
-                
-    #if player doesn't flee, use the enemy attack method in the enemy class
-    if current_turn == 2:
-        action_cooldown += 1
-        if action_cooldown >= action_wait_time:
-            if newEnemy.current_health > 0:
-                enemyDamage = newEnemy.attack()
-                #check player health and if you die, play death animation
-                p.current_health -= enemyDamage
-                current_turn += 1
-                action_cooldown = 0
-            else:
-                current_turn = 1
-                newEnemy = None
-    #if the player is still alive, reset the gameplay loop
-    if current_turn > total_turns:
-                current_turn = 1
+                    
+        #if player doesn't flee, use the enemy attack method in the enemy class
+        if current_turn == 2:
+            action_cooldown += 1
+            if action_cooldown >= action_wait_time:
+                if newEnemy.current_health > 0:
+                    enemyDamage = newEnemy.attack()
+                    #check player health and if you die, play death animation
+                    p.current_health -= enemyDamage
+                    print(p.current_health)
+                    if p.current_health <= 0:
+                        p.death()
+                    current_turn += 1
+                    action_cooldown = 0
+                else:
+                    current_turn = 1
+                    newEnemy = None
+                    
+        #if the player is still alive, reset the gameplay loop
+        if current_turn > total_turns:
+                    current_turn = 1
 
+    #if the player falls below 0 health, end the game
+    else:
+        game_over = True
+
+    #player leveling up
     if p.xp > p.xp_lvl_up:
         p.level += 1
         p.xp -= p.xp_lvl_up
-        p.xp_lvl_up *= 1.15
+        p.xp_lvl_up = round(p.xp_lvl_up * 1.15)
         p.damage += 5
         p.max_health += 5
         print(f"XP: {p.xp}")
+            
+
+    if game_over:
+        #set the game over screen rectangle and put in the encounter num
+        #along with exit and restart buttons
+        gameover_text = font.render(f"Game Over! You defeated {enc_num - 1} enemies",\
+                                   True, WHITE, RED)
+        textRect_gameover = gameover_text.get_rect(center=(screen_width/2,\
+                                                          screen_height/2.3))
+        screen.blit(gameover_text, textRect_gameover)
+        screen.blit(restart, textRect_restart)
+        screen.blit(leave, textRect_leave)
     pygame.display.update()
 pygame.quit()
