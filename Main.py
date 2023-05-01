@@ -307,22 +307,26 @@ def draw_bg():
 #
 #    # Draw the player's health bar
 #    player_hp_ratio = p.current_health/p.max_health
+#    pygame.draw.rect(screen, black, (10, screen_height - bottom_pannel + 10, 150, 20))
 #    draw_text(f"HP: {p.current_health}/{p.max_health}", font, white, 10, screen_height - bottom_pannel + 10)
 #    pygame.draw.rect(screen, red, (10, screen_height - bottom_pannel + 35, 150, 20))
 #    pygame.draw.rect(screen, green, (10, screen_height - bottom_pannel + 35, 150*player_hp_ratio, 20))
 #    
 #    # Draw the player's XP bar
+#    pygame.draw.rect(screen, black, (10, screen_height - bottom_pannel + 60, 150, 20))
 #    draw_text(f"Level: {p.level}", font, white, 10, screen_height - bottom_pannel + 60)
 #
 #    # Draw the player's potion count
 #    potion_img = pygame.image.load("Icons\icons\\32x32\potion_01a.png").convert_alpha()
 #    spacing = 0
+#    pygame.draw.rect(screen, black, (spacing, screen_height - bottom_pannel + 85, 150, 20))
 #    for i in range(p.potions):
 #        screen.blit(potion_img, (spacing, screen_height - bottom_pannel + 85))
 #        spacing += 25
 #   
 #    # Draw the enemy's health bar
 #    enemy_hp_ratio = newEnemy.current_health/newEnemy.max_health
+#    pygame.draw.rect(screen, black, ( screen_width/2+10, screen_height - bottom_pannel + 10, 150, 20))
 #    draw_text(f"HP: {newEnemy.current_health}/{newEnemy.max_health}", font, white, screen_width/2+10, screen_height - bottom_pannel + 10)
 #    pygame.draw.rect(screen, red, (screen_width/2+10, screen_height - bottom_pannel + 35, 150, 20))
 #    pygame.draw.rect(screen, green, (screen_width/2+10, screen_height - bottom_pannel + 35, 150*enemy_hp_ratio, 20))
