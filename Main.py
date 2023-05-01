@@ -291,6 +291,38 @@ background_img = pygame.image.load('Background/dungeon-bg.jpeg').convert_alpha()
 def draw_bg():
     screen.blit(background_img, (0,0))
 
+    
+##function for displaying text
+#def draw_text(text, font, text_color, x, y):
+#    img = font.render(text, True, text_color)
+#    screen.blit(img, (x, y))
+#def draw_hud():
+#    # Set up the font for the text
+#    font = pygame.font.SysFont("Arial", 20)
+#
+#    # Some colors for display
+#    red = (255, 0, 0)
+#    green = (0, 255, 0)
+#    white = (255, 255, 255)
+#
+#    # Draw the player's health bar
+#    player_hp_ratio = p.current_health/p.max_health
+#    draw_text(f"HP: {p.current_health}/{p.max_health}", font, white, 10, screen_height - bottom_pannel + 10)
+#    pygame.draw.rect(screen, red, (10, screen_height - bottom_pannel + 35, 150, 20))
+#    pygame.draw.rect(screen, green, (10, screen_height - bottom_pannel + 35, 150*player_hp_ratio, 20))
+#    
+#    # Draw the player's XP bar
+#    draw_text(f"Level: {p.level}", font, white, 10, screen_height - bottom_pannel + 60)
+#
+#    # Draw the player's potion count
+#    potion_img = pygame.image.load("Icons\icons\\32x32\potion_01a.png").convert_alpha()
+#    spacing = 0
+#    for i in range(p.potions):
+#        screen.blit(potion_img, (spacing, screen_height - bottom_pannel + 85))
+#        spacing += 25
+
+
+
 #instantiate the player
 p = Game(250, 350, "Knight", 30, 30, 10, 1, 1)
 
@@ -335,6 +367,9 @@ while(running):
     p.draw()
     newEnemy.update()
     newEnemy.draw()
+    
+    ##draw the hud
+    #draw_hud()
 
     #let player go first
     if p.current_health > 0:
